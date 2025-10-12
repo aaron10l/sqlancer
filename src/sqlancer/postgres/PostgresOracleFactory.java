@@ -16,6 +16,7 @@ import sqlancer.common.query.SQLancerResultSet;
 import sqlancer.postgres.gen.PostgresCommon;
 import sqlancer.postgres.gen.PostgresExpressionGenerator;
 import sqlancer.postgres.oracle.PostgresFuzzer;
+import sqlancer.postgres.oracle.PostgresNegativePivotedQuerySynthesisOracle;
 import sqlancer.postgres.oracle.PostgresPivotedQuerySynthesisOracle;
 import sqlancer.postgres.oracle.tlp.PostgresTLPAggregateOracle;
 import sqlancer.postgres.oracle.tlp.PostgresTLPHavingOracle;
@@ -35,6 +36,17 @@ public enum PostgresOracleFactory implements OracleFactory<PostgresGlobalState> 
         @Override
         public TestOracle<PostgresGlobalState> create(PostgresGlobalState globalState) throws SQLException {
             return new PostgresPivotedQuerySynthesisOracle(globalState);
+        }
+
+        @Override
+        public boolean requiresAllTablesToContainRows() {
+            return true;
+        }
+    },
+    NEGATIVE_PQS {
+        @Override
+        public TestOracle<PostgresGlobalState> create(PostgresGlobalState globalState) throws SQLException {
+            return new PostgresNegativePivotedQuerySynthesisOracle(globalState);
         }
 
         @Override
