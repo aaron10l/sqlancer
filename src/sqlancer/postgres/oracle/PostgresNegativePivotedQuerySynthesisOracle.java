@@ -134,9 +134,17 @@ public class PostgresNegativePivotedQuerySynthesisOracle
     @Override
     protected Query<SQLConnection> getContainmentCheckQuery(Query<?> query) throws SQLException {
         StringBuilder sb = new StringBuilder();
+        
+        // For Negative PQS: We want to verify the pivot row does NOT exist in results
+        // The base class expects this query to return rows on SUCCESS
+        // So we use NOT EXISTS: returns 1 row when pivot is absent (success)
+        
+        sb.append("SELECT 1 WHERE NOT EXISTS (");
         sb.append("SELECT * FROM (");
         sb.append(query.getUnterminatedQueryString());
         sb.append(") AS result WHERE ");
+        
+        // Build the condition that matches the pivot row
         int i = 0;
         for (PostgresColumn c : fetchColumns) {
             if (i++ != 0) {
@@ -145,6 +153,7 @@ public class PostgresNegativePivotedQuerySynthesisOracle
             sb.append("result.");
             sb.append(c.getTable().getName());
             sb.append(c.getName());
+            
             if (pivotRow.getValues().get(c).isNull()) {
                 sb.append(" IS NULL");
             } else {
@@ -152,6 +161,8 @@ public class PostgresNegativePivotedQuerySynthesisOracle
                 sb.append(pivotRow.getValues().get(c).getTextRepresentation());
             }
         }
+        sb.append(")");
+        
         String resultingQueryString = sb.toString();
         return new SQLQueryAdapter(resultingQueryString, errors);
     }
