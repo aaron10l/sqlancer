@@ -75,7 +75,7 @@ public abstract class PostgresConstant implements PostgresExpression {
             case TEXT:
                 return PostgresConstant.createTextConstant(value ? "true" : "false");
             default:
-                return null;
+                return PostgresConstant.createNullConstant();
             }
         }
 
@@ -212,7 +212,7 @@ public abstract class PostgresConstant implements PostgresExpression {
             case TEXT:
                 return this;
             default:
-                return null;
+                return PostgresConstant.createNullConstant();
             }
         }
 
@@ -307,7 +307,7 @@ public abstract class PostgresConstant implements PostgresExpression {
             case TEXT:
                 return PostgresConstant.createTextConstant(String.valueOf(val));
             default:
-                return null;
+                return PostgresConstant.createNullConstant();
             }
         }
 
@@ -390,22 +390,22 @@ public abstract class PostgresConstant implements PostgresExpression {
 
         @Override
         public String getUnquotedTextRepresentation() {
-            return null;
+            return getTextRepresentation();
         }
 
         @Override
         public PostgresConstant isEquals(PostgresConstant rightVal) {
-            return null;
+            return PostgresConstant.createNullConstant();
         }
 
         @Override
         protected PostgresConstant isLessThan(PostgresConstant rightVal) {
-            return null;
+            return PostgresConstant.createNullConstant();
         }
 
         @Override
         public PostgresConstant cast(PostgresDataType type) {
-            return null;
+            return PostgresConstant.createNullConstant();
         }
     }
 

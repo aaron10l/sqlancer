@@ -82,6 +82,7 @@ public final class PostgresCommon {
         errors.add("a negative number raised to a non-integer power yields a complex result");
         errors.add("could not determine polymorphic type because input has type unknown");
         errors.add("character number must be positive");
+        errors.add("partitioned tables cannot be unlogged");
         errors.addAll(getToCharFunctionErrors());
         errors.addAll(getBitStringOperationErrors());
         errors.addAll(getFunctionErrors());
