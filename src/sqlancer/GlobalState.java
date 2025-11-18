@@ -83,7 +83,10 @@ public abstract class GlobalState<O extends DBMSSpecificOptions<?>, S extends Ab
     }
 
     private ExecutionTimer executePrologue(Query<?> q) throws Exception {
-        boolean logExecutionTime = getOptions().logExecutionTime();
+        boolean logExecutionTime = false;
+        if (getOptions().logEachSelect()) {
+            logExecutionTime = getOptions().logExecutionTime();
+        }
         ExecutionTimer timer = null;
         if (logExecutionTime) {
             timer = new ExecutionTimer().start();

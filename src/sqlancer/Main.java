@@ -367,7 +367,7 @@ public final class Main {
             boolean success;
             success = q.execute(globalState, fills);
             Main.nrSuccessfulActions.addAndGet(1);
-            if (globalState.getOptions().loggerPrintFailed() || success) {
+            if (globalState.getState() != null && (globalState.getOptions().loggerPrintFailed() || success)) {
                 globalState.getState().logStatement(q);
             }
             return success;
@@ -441,25 +441,26 @@ public final class Main {
             G state = createGlobalState();
             stateToRepro = provider.getStateToReproduce(databaseName);
             stateToRepro.seedValue = r.getSeed();
-            state.setState(stateToRepro);
-            logger = new StateLogger(databaseName, provider, options);
+            state.setState(stateToRepro);  // Set state FIRST
             state.setRandomly(r);
             state.setDatabaseName(databaseName);
             state.setMainOptions(options);
             state.setDbmsSpecificOptions(command);
+            
+            logger = new StateLogger(databaseName, provider, options);
+            state.setStateLogger(logger);
+            
             try (C con = provider.createDatabase(state)) {
-                QueryManager<C> manager = new QueryManager<>(state);
                 try {
                     stateToRepro.databaseVersion = con.getDatabaseVersion();
                 } catch (Exception e) {
                     // ignore
                 }
                 state.setConnection(con);
-                state.setStateLogger(logger);
+                
+                QueryManager<C> manager = new QueryManager<>(state);
                 state.setManager(manager);
-                if (options.logEachSelect()) {
-                    logger.writeCurrent(state.getState());
-                }
+                
                 Reproducer<G> reproducer = null;
                 if (options.enableQPG()) {
                     provider.generateAndTestDatabaseWithQueryPlanGuidance(state);

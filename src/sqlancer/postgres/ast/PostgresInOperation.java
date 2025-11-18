@@ -41,9 +41,11 @@ public class PostgresInOperation implements PostgresExpression {
             }
             if (rightExpectedValue.isNull()) {
                 isNull = true;
-            } else if (rightExpectedValue.isEquals(this.expr.getExpectedValue()).isBoolean()
-                    && rightExpectedValue.isEquals(this.expr.getExpectedValue()).asBoolean()) {
-                return PostgresConstant.createBooleanConstant(isTrue);
+            } else {
+                PostgresConstant equalsResult = rightExpectedValue.isEquals(this.expr.getExpectedValue());
+                if (equalsResult != null && equalsResult.isBoolean() && equalsResult.asBoolean()) {
+                    return PostgresConstant.createBooleanConstant(isTrue);
+                }
             }
         }
 

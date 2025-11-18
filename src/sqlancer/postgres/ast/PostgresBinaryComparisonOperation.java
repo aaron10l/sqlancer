@@ -128,7 +128,11 @@ public class PostgresBinaryComparisonOperation
         if (leftExpectedValue == null || rightExpectedValue == null) {
             return null;
         }
-        return getOp().getExpectedValue(leftExpectedValue, rightExpectedValue);
+        PostgresConstant comparisonResult = getOp().getExpectedValue(leftExpectedValue, rightExpectedValue);
+        if (comparisonResult == null) {
+            return null;
+        }
+        return comparisonResult;
     }
 
     @Override
