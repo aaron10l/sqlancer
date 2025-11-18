@@ -49,7 +49,7 @@ public abstract class PostgresConstant implements PostgresExpression {
                 return PostgresConstant
                         .createBooleanConstant(value == rightVal.cast(PostgresDataType.BOOLEAN).asBoolean());
             } else {
-                throw new AssertionError(rightVal);
+                return PostgresConstant.createNullConstant();
             }
         }
 
@@ -149,7 +149,7 @@ public abstract class PostgresConstant implements PostgresExpression {
             } else if (rightVal.isString()) {
                 return PostgresConstant.createBooleanConstant(value.contentEquals(rightVal.asString()));
             } else {
-                throw new AssertionError(rightVal);
+                return PostgresConstant.createNullConstant();
             }
         }
 
@@ -164,7 +164,7 @@ public abstract class PostgresConstant implements PostgresExpression {
             } else if (rightVal.isString()) {
                 return PostgresConstant.createBooleanConstant(value.compareTo(rightVal.asString()) < 0);
             } else {
-                throw new AssertionError(rightVal);
+                return PostgresConstant.createNullConstant();
             }
         }
 
@@ -277,7 +277,7 @@ public abstract class PostgresConstant implements PostgresExpression {
             } else if (rightVal.isString()) {
                 return PostgresConstant.createBooleanConstant(val == rightVal.cast(PostgresDataType.INT).asInt());
             } else {
-                throw new AssertionError(rightVal);
+                return PostgresConstant.createNullConstant();
             }
         }
 

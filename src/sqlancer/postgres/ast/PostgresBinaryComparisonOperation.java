@@ -19,8 +19,11 @@ public class PostgresBinaryComparisonOperation
         IS_DISTINCT("IS DISTINCT FROM") {
             @Override
             public PostgresConstant getExpectedValue(PostgresConstant leftVal, PostgresConstant rightVal) {
-                return PostgresConstant
-                        .createBooleanConstant(!IS_NOT_DISTINCT.getExpectedValue(leftVal, rightVal).asBoolean());
+                PostgresConstant isNotDistinct = IS_NOT_DISTINCT.getExpectedValue(leftVal, rightVal);
+                if (isNotDistinct == null || isNotDistinct.isNull() || !isNotDistinct.isBoolean()) {
+                    return PostgresConstant.createNullConstant();
+                }
+                return PostgresConstant.createBooleanConstant(!isNotDistinct.asBoolean());
             }
         },
         IS_NOT_DISTINCT("IS NOT DISTINCT FROM") {
@@ -31,7 +34,12 @@ public class PostgresBinaryComparisonOperation
                 } else if (rightVal.isNull()) {
                     return PostgresConstant.createFalse();
                 } else {
-                    return leftVal.isEquals(rightVal);
+                    PostgresConstant equalsResult = leftVal.isEquals(rightVal);
+                    if (equalsResult == null || equalsResult.isNull() || !equalsResult.isBoolean()) {
+                        // For unsupported type comparisons, treat as not equal
+                        return PostgresConstant.createFalse();
+                    }
+                    return equalsResult;
                 }
             }
         },
